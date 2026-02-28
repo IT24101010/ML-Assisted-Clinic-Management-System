@@ -1,8 +1,23 @@
 const express = require('express');
 const router = express.Router();
+const {
+    getAllServices,
+    getAllServicesAdmin,
+    getServiceById,
+    createService,
+    updateService,
+    deleteService
+} = require('../controllers/serviceController');
+const { protect, authorize } = require('../middleware/authMiddleware');
 
-router.get('/', (req, res) => {
-    res.json({ message: "Service routes are working" });
-});
+// Public routes
+router.get('/', getAllServices);
+router.get('/:id', getServiceById);
+
+// Protected Admin routes
+router.get('/admin/all', protect, authorize('admin'), getAllServicesAdmin);
+router.post('/', protect, authorize('admin'), createService);
+router.put('/:id', protect, authorize('admin'), updateService);
+router.delete('/:id', protect, authorize('admin'), deleteService);
 
 module.exports = router;
